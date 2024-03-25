@@ -1,11 +1,12 @@
 import { SigninInput } from "@darishkhan/mediyyumm-common/dist";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const URL = "https://backend.mediyyumm.workers.dev";
 
 export const LoginComponent = () => {
+    const navigate = useNavigate();
   const [signinInput, setSigninInput] = useState<SigninInput>({
     email: "",
     password: "",
@@ -17,10 +18,16 @@ export const LoginComponent = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.get(
+      const response = await axios.post(
         `${URL}/api/v1/user/signin`,
         signinInput
       );
+      if(response.status === 200)
+      {
+        localStorage.setItem('token', "Bearer "+response.data.token);
+        console.log(response);
+        navigate('/blogs');
+      }
     } catch (error) {}
   };
 
